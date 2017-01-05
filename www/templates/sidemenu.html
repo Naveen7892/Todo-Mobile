@@ -1,0 +1,37 @@
+<ion-side-menus enable-menu-with-back-views="false">
+  <!-- Actual content to be displayed -->
+  <ion-side-menu-content drag-content="true" edge-drag-threshold="true">
+    <ion-nav-bar class="bar-dark">
+    </ion-nav-bar>
+    
+    <!-- Templates w.r.t each page will be shown here -->
+    <ion-nav-view name="todoContent"></ion-nav-view>     
+  </ion-side-menu-content>
+
+  <!-- Side bar items list -->
+  <ion-side-menu side="left" width="200">
+    <ion-header-bar class="bar-dark">
+      <h1 class="title">
+        <i class="large_icon ion-ios-list"></i>
+        Todo
+        <i class="large_icon ion-android-done-all"></i>
+        </h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list>
+        
+        <ion-item menu-close href="#/todo/home" style="font-size: 25px;">
+          <i class="ion-ios-paper"></i>
+          Todo List
+        </ion-item>
+
+        <ion-item menu-close href="#/todo/aboutus" style="font-size: 25px;">
+          <i class="ion-ios-people"></i>
+          About us
+        </ion-item>
+       
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+    
+</ion-side-menus>

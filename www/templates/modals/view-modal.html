@@ -1,0 +1,11 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-dark">
+    <h1 class="title">Todo</h1>
+    <button class="button button-icon button-clear" ng-click="vm.closeView();">
+    Close
+    </button>
+  </ion-header-bar>
+  <ion-content class="has-header" scroll="false">
+    <input type="text" placeholder="Title" ng-modal="vm.newTodo"/>
+  </ion-content>
+</ion-modal-view>
