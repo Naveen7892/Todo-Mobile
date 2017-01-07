@@ -1,11 +1,37 @@
 <ion-modal-view>
+  <!--<ion-nav-bar class="bar-dark">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
+        
+        <ion-nav-buttons side="right">
+            <button class="button button-icon button-clear large_button" ng-click="doRefresh()">
+                <i class="medium_icon ion-refresh"></i>
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>-->
+    
   <ion-header-bar class="bar-dark">
+    <button class="button button-icon button-clear" ng-click="saveAndClose();">
+      <i class="icon ion-arrow-left-c"></i>
+    </button>
     <h1 class="title">Todo</h1>
-    <button class="button button-icon button-clear" ng-click="vm.closeView();">
+    <button class="button button-icon button-clear" ng-click="closeView();">
     Close
     </button>
   </ion-header-bar>
+  
   <ion-content class="has-header" scroll="false">
-    <input type="text" placeholder="Title" ng-modal="vm.newTodo"/>
+    <div class="list">
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Title</span>
+        <input type="text" placeholder="Enter title" ng-model="modalInput.title">
+      </label>
+      <label class="item item-input item-floating-label">
+        <!--<span class="input-label">Last Name</span>
+        <input type="text" placeholder="Last Name">-->
+          <span class="input-label">Content</span>
+          <textarea placeholder="Enter content" ng-model="modalInput.content"></textarea>
+      </label>
+    </div>
   </ion-content>
 </ion-modal-view>

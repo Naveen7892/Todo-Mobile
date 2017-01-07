@@ -4,9 +4,12 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
+var db = null;
+
 angular.module('todo', ['ionic', 'todo.controllers', 'todo.services', 'ngCordova', 'jett.ionic.filter.bar'])
 
 .run(function($ionicPlatform) {
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -19,6 +22,34 @@ angular.module('todo', ['ionic', 'todo.controllers', 'todo.services', 'ngCordova
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    // CREATE OR OPEN DATABASE
+    db = window.sqlitePlugin.openDatabase({
+      name: 'todo-mobile.db',
+      key: 'ToDo-Mobile',
+      location: 'default'
+    },
+    function(res) {
+      console.log(JSON.stringify(res));
+    },
+    function(err) {
+      console.log(JSON.stringify(err));
+    }
+    );
+
+    // CREATE TABLE if it doesn't exist
+    db.executeSql("CREATE TABLE IF NOT EXISTS todo_content (todo_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, date_time TEXT DEFAULT CURRENT_TIMESTAMP, status TEXT DEFAULT 'PENDING' )", [],
+      function(res) {
+        console.log("Table created!");
+      },
+      function(err) {
+        console.log("Table creation failed!");
+      }
+    );
+    
+    db.executeSql('DELETE FROM todo_content', []);
+    db.executeSql('INSERT INTO todo_content(title, content) VALUES(?, ?)', ['hi', 'hello']);
+
   });
 })
 
@@ -37,8 +68,23 @@ angular.module('todo', ['ionic', 'todo.controllers', 'todo.services', 'ngCordova
       views: {
         'todoContent': {
           templateUrl: 'templates/home.html',
-          controller: 'HomeCtrl as vm'
+          controller: 'HomeCtrl'
         }
+      },
+      resolve: {
+          resolvedAllTodo: function(DbFactory) {
+            // var allTodo = [];
+               DbFactory.getAllTodo().then(
+                function(res) {
+                //   if(res.rows.length > 0) {
+                //     for(var i = 0; i < res.rows.length; i++) {
+                //       allTodo.push(res.rows.item(i));
+                //     }
+                //   }
+                //   return allTodo;
+                // /}
+                });
+          }
       }
     })
 
@@ -53,52 +99,6 @@ angular.module('todo', ['ionic', 'todo.controllers', 'todo.services', 'ngCordova
     });
 
     $urlRouterProvider.otherwise('/todo/home');
+})
 
-
-
-  //   .state('app', {
-  //   url: '/app',
-  //   abstract: true,
-  //   templateUrl: 'templates/menu.html',
-  //   controller: 'AppCtrl'
-  // })
-
-  // .state('app.search', {
-  //   url: '/search',
-  //   views: {
-  //     'menuContent': {
-  //       templateUrl: 'templates/search.html'
-  //     }
-  //   }
-  // })
-
-  // .state('app.browse', {
-  //     url: '/browse',
-  //     views: {
-  //       'menuContent': {
-  //         templateUrl: 'templates/browse.html'
-  //       }
-  //     }
-  //   })
-  //   .state('app.playlists', {
-  //     url: '/playlists',
-  //     views: {
-  //       'menuContent': {
-  //         templateUrl: 'templates/playlists.html',
-  //         controller: 'PlaylistsCtrl'
-  //       }
-  //     }
-  //   })
-
-  // .state('app.single', {
-  //   url: '/playlists/:playlistId',
-  //   views: {
-  //     'menuContent': {
-  //       templateUrl: 'templates/playlist.html',
-  //       controller: 'PlaylistCtrl'
-  //     }
-  //   }
-  // });
-  // // if none of the above states are matched, use this as the fallback
-  // $urlRouterProvider.otherwise('/app/playlists');
-});
+;

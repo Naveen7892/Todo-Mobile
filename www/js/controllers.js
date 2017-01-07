@@ -4,41 +4,90 @@ angular.module('todo.controllers', [])
 
 })
 
-.controller('HomeCtrl', function($scope, $ionicFilterBar, $ionicModal) {
-  var vm = this,
-        items = [],
+.controller('HomeCtrl', function($scope, $ionicFilterBar, $ionicModal, resolvedAllTodo, DbFactory, $ionicPopup) {
+
+    $scope.modalInput = {};
+    $scope.items = [];
+
+    var items = [],
         filterBarInstance;
 
-    for (var i = 1; i <= 1000; i++) {
-        var itemDate = moment().add(i, 'days');
+    // for (var i = 1; i <= 100; i++) {
+    //     var itemDate = moment().add(i, 'days');
 
-        var item = {
-            description: 'Description for item ' + i,
-            date: itemDate.toDate()
-        };
-        items.push(item);
+    //     var item = {
+    //         description: 'Description for item ' + i,
+    //         date: itemDate.toDate()
+    //     };
+    //     items.push(item);
+    // }
+
+    // $scope.items = items;
+
+    $scope.loadTodo = function() {
+      //console.log(DbFactory.getAllTodo());
+      
+      DbFactory.getAllTodo().then(
+        function(res) {
+          var allTodo = [];
+          if(res.rows.length > 0) {
+            for(var i = 0; i < res.rows.length; i++) {
+              allTodo.push(res.rows.item(i));
+            }
+          }
+          $scope.items = allTodo;
+        }
+      );
+      
+    };
+
+    if(!resolvedAllTodo || !resolvedAllTodo) {
+      console.log("Fetching Failed!");
+    } else {
+      $scope.items = resolvedAllTodo;
     }
 
-    vm.items = items;
+    // if(resolvedAllTodo.rows.length > 0) {
+    //   var allTodo = [];
+    //   for(var i = 0; i < res.rows.length; i++) {
+    //     allTodo.push(res.rows.item(i));
+    //   }
+    //   $scope.items = allTodo;
+    // }
 
-    vm.showFilterBar = function () {
+
+    //$scope.items = resolvedAllTodo;
+
+    // var items = [];
+    // var filteBarInstance;
+    // for(var i = 1; i <= 100; i++) {
+    //   var item = {
+    //     description: 'Description ' + i
+    //   };
+    //   items.push(item);
+    // }
+
+    // $scope.items = items;
+
+    $scope.showFilterBar = function () {
       filterBarInstance = $ionicFilterBar.show({
-        items: vm.items,
+        items: $scope.items,
         update: function (filteredItems) {
-          vm.items = filteredItems;
+          $scope.items = filteredItems;
         },
         filterProperties: 'description'
       });
     };
 
-    // modal
+    // View Modal
 
     // Filter options modal
     $ionicModal.fromTemplateUrl('templates/modals/view-modal.html', {
+      // scope: $scope,
       scope: $scope,
       focusFirstInput: true,  
       animation: 'slide-in-up',
-          backdropClickToClose: true
+      backdropClickToClose: true
     }).then(function(modal) {
       $scope.modal = modal;
     });
@@ -68,51 +117,23 @@ angular.module('todo.controllers', [])
       console.log("Ended: "+$scope.activeIndex);
     });
 
-    vm.openView = function() {
+    $scope.openView = function() {
+        // console.log($scope.modalInput);
+        // console.log($scope.modalInput);
         $scope.modal.show();
     };
 
-    vm.closeView = function() {
-        $scope.modal.hide();
+    $scope.saveAndClose = function() {
+      
+      $scope.modal.hide();
     };
 
-    return vm;
-})
-
-.filter('groupByMonthYear', function($parse) {
-    var dividers = {};
-
-    return function(input) {
-        if (!input || !input.length) return;
-
-        var output = [], 
-            previousDate, 
-            currentDate;
-
-        for (var i = 0, ii = input.length; i < ii && (item = input[i]); i++) {
-            currentDate = moment(item.date);
-            if (!previousDate ||
-                currentDate.month() != previousDate.month() ||
-                currentDate.year() != previousDate.year()) {
-
-                var dividerId = currentDate.format('MMYYYY');
-
-                if (!dividers[dividerId]) {
-                    dividers[dividerId] = {
-                        isDivider: true,
-                        divider: currentDate.format('MMMM YYYY') 
-                    };
-                }
-
-                output.push(dividers[dividerId]);               
-            }
-
-            output.push(item);
-            previousDate = currentDate;
-        }
-
-        return output;
+    $scope.closeView = function() {
+      console.log($scope.modalInput);
+      $scope.modalInput = {};
+      $scope.modal.hide();
     };
+
 })
 
 .controller('AboutCtrl', function($scope) {

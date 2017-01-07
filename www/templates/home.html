@@ -1,13 +1,24 @@
 <ion-view title="Todo">
-    <ion-nav-bar class="bar-dark"></ion-nav-bar>
-    <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear large_button" menu-toggle="left">
-            <i class="large_icon ion-navicon"></i>
-        </button>
-    </ion-nav-buttons>
+
+    <!--  Machines      -->
+    <ion-header-bar class="bar-subheader">
+        <label class="item item-input" style="width:100%" on-touch="openView();">
+            <input type="text" placeholder="Enter title">
+            <i class="icon ion-edit placeholder-icon" style="margin-right: 20px;"></i>
+        </label>
+    </ion-header-bar>
+
+    <ion-nav-bar class="bar-dark">
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear large_button" menu-toggle="left">
+                <i class="large_icon ion-navicon"></i>
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    
 
     <ion-nav-buttons side="right">
-        <button class="button button-icon button-clear large_button" style="margin-right: 5px;" ng-click="vm.showFilterBar()">
+        <button class="button button-icon button-clear large_button" style="margin-right: 5px;" ng-click="showFilterBar()">
             <i class="large_icon ion-android-search"></i>
         </button>
         
@@ -16,24 +27,26 @@
         </button>
     </ion-nav-buttons>
 
-    <div class="list list-inset sub-headerbar">
-      <label class="item item-input">
-        <input type="text" placeholder="Enter title" on-touch="vm.openView();">
-        <i class="icon ion-edit placeholder-icon" style="margin-right: 20px;"></i>
-      </label>
-    </div>
+    
     
     <ion-content>
-        
-
+        <button type="button" ng-click="loadTodo()">Load</button>
         <ion-list>
+            <div ng-repeat="item in items track by item.todo_id">
+                <ion-item>
+                    Title: {{ item.title }} <br/>
+                    Content: {{ item.content }}
+                    <!--<div>{{ item.date | date:'dd-MM-yyyy' }}</div>-->
+                </ion-item>
+            </div>
+
           <!--<div collection-repeat="item in vm.items | groupByMonthYear" divider-collection-repeat>-->
-            <div ng-repeat="item in vm.items">
-              <ion-item>
-                <div>{{ item.description }}</div>
-                <div>{{ item.date | date:'dd-MM-yyyy' }}</div>
-              </ion-item>
-          </div>
+            <!--<div ng-repeat="item in items track by $index">
+                <ion-item>
+                    <div>{{ item.description }}</div>
+                    <div>{{ item.date | date:'dd-MM-yyyy' }}</div>
+                </ion-item>
+            </div>-->
         </ion-list>  
     </ion-content>
 </ion-view>
