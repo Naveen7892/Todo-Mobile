@@ -2,13 +2,63 @@
 
 /* Custom icon size for SIDEMENU icon */
 .large_icon {
+  font-size: 30px;
+  padding: 3px;
+}
+
+.medium_icon {
   font-size: 20px;
   padding: 3px;
 }
 
 .modal {
   width: 100%;
-  left: 0;
+  /*left: 0;
   top: 0;
-  bottom: 0;
+  bottom: 0;*/
 }
+
+.custom_textarea {
+    height: 100px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+/*ANIMATIONS*/
+.todo-item.ng-enter {
+    -webkit-animation: fadeInLeft 1s;
+    animation: fadeInLeft 1s;
+}
+
+.todo-item.ng-enter-stagger {
+  -webkit-animation-delay:200ms;
+  animation-delay:200ms;
+
+  /* override to make sure it's not inherited from other styles */
+  -webkit-animation-duration:0;
+  animation-duration:0;
+}
+
+.bg_color {
+   background-color:wheat;
+}
+
+.bg_color input {
+  background-color: none;
+}
+
+/*POPOVER Modifications*/
+/*.popover {
+  height: auto !important;
+}
+.popover ion-header-bar {
+  position: relative;
+}
+.popover ion-content {
+  top: 0;
+  position: relative;
+}
+.popover-inner-content {
+  width: 100%;
+  padding: 5px 20px;
+}*/

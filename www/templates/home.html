@@ -1,52 +1,58 @@
-<ion-view title="Todo">
-
-    <!--  Machines      -->
-    <ion-header-bar class="bar-subheader">
-        <label class="item item-input" style="width:100%" on-touch="openView();">
-            <input type="text" placeholder="Enter title">
-            <i class="icon ion-edit placeholder-icon" style="margin-right: 20px;"></i>
-        </label>
-    </ion-header-bar>
-
+<ion-view title="Todo" class="bg_color">
+    <!-- NAVIGATION BAR -->
     <ion-nav-bar class="bar-dark">
+        <!-- NAVIGATION BAR BUTTONS - LEFT -->
         <ion-nav-buttons side="left">
             <button class="button button-icon button-clear large_button" menu-toggle="left">
                 <i class="large_icon ion-navicon"></i>
             </button>
         </ion-nav-buttons>
+
+        <!-- NAVIGATION BAR BUTTONS - RIGHT -->
+        <ion-nav-buttons side="right">
+            <button class="button button-icon button-clear large_button" style="margin-right: 5px;" ng-click="showFilterBar()">
+                <i class="medium_icon ion-android-search"></i>
+            </button>
+            
+            <button class="button button-icon button-clear large_button" ng-click="openFilterView($event);">
+                <i class="medium_icon ion-android-funnel"></i>
+            </button>
+        </ion-nav-buttons>
     </ion-nav-bar>
     
+    <!-- SUB HEADER -->
+    <ion-header-bar class="bar-subheader bg_color">
+        <label class="item item-input" style="width:100%" on-touch="" on-tap="openView();">
+            <input type="text" placeholder="Enter title" ng-model="modalInput.title">
+            <i class="icon ion-edit placeholder-icon" style="margin-right: 20px;"></i>
+        </label>
+    </ion-header-bar>
 
-    <ion-nav-buttons side="right">
-        <button class="button button-icon button-clear large_button" style="margin-right: 5px;" ng-click="showFilterBar()">
-            <i class="large_icon ion-android-search"></i>
-        </button>
-        
-        <button class="button button-icon button-clear large_button">
-            <i class="large_icon ion-ios-eye"></i>
-        </button>
-    </ion-nav-buttons>
-
-    
-    
+    <!-- CONTENT -->
     <ion-content>
-        <button type="button" ng-click="loadTodo()">Load</button>
-        <ion-list>
-            <div ng-repeat="item in items track by item.todo_id">
-                <ion-item>
-                    Title: {{ item.title }} <br/>
-                    Content: {{ item.content }}
-                    <!--<div>{{ item.date | date:'dd-MM-yyyy' }}</div>-->
-                </ion-item>
+        <!--<button type="button" ng-click="loadTodo()">Load</button>-->
+        <!--<ion-list>
+            <ion-list class="card" ng-repeat="item in items track by item.todo_id">
+                <div class="todo_item" ng-click="editView(item);">
+                    <ion-item class="item-divider">
+                        {{ item.title }}
+                    </ion-item>
+                    <ion-item class="item-body">
+                        {{ item.content }}
+                    </ion-item>
+                </div>
+            </ion-list>
+        </ion-list>-->
+        
+        <div class="list card todo-item" ng-repeat="item in items track by item.todo_id" ng-click="editView(item);" on-hold="optionsView(item);">
+            <div class="item item-divider">
+                {{ item.title }}
             </div>
-
-          <!--<div collection-repeat="item in vm.items | groupByMonthYear" divider-collection-repeat>-->
-            <!--<div ng-repeat="item in items track by $index">
-                <ion-item>
-                    <div>{{ item.description }}</div>
-                    <div>{{ item.date | date:'dd-MM-yyyy' }}</div>
-                </ion-item>
-            </div>-->
-        </ion-list>  
+            <div class="item item-body">
+                <div>
+                    {{ item.content }}
+                </div>
+            </div>
+        </div>    
     </ion-content>
 </ion-view>

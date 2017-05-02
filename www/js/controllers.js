@@ -4,7 +4,7 @@ angular.module('todo.controllers', [])
 
 })
 
-.controller('HomeCtrl', function($scope, $ionicFilterBar, $ionicModal, resolvedAllTodo, DbFactory, $ionicPopup) {
+.controller('HomeCtrl', function($scope, $ionicFilterBar, $ionicModal, DbFactory, $ionicPopup, $ionicActionSheet, $ionicPopover, resolvedAllTodo) {
 
     $scope.modalInput = {};
     $scope.items = [];
@@ -29,13 +29,15 @@ angular.module('todo.controllers', [])
       
       DbFactory.getAllTodo().then(
         function(res) {
-          var allTodo = [];
-          if(res.rows.length > 0) {
-            for(var i = 0; i < res.rows.length; i++) {
-              allTodo.push(res.rows.item(i));
-            }
-          }
-          $scope.items = allTodo;
+          // var allTodo = [];
+          // if(res.rows.length > 0) {
+          //   for(var i = 0; i < res.rows.length; i++) {
+          //     allTodo.push(res.rows.item(i));
+          //   }
+          // }
+          // $scope.items = allTodo;
+
+          $scope.items = res;
         }
       );
       
@@ -75,7 +77,7 @@ angular.module('todo.controllers', [])
         update: function (filteredItems) {
           $scope.items = filteredItems;
         },
-        filterProperties: 'description'
+        filterProperties: ['title']
       });
     };
 
@@ -85,8 +87,8 @@ angular.module('todo.controllers', [])
     $ionicModal.fromTemplateUrl('templates/modals/view-modal.html', {
       // scope: $scope,
       scope: $scope,
-      focusFirstInput: true,  
-      animation: 'slide-in-up',
+      // focusFirstInput: true,  
+      animation: 'slide-in-right',
       backdropClickToClose: true
     }).then(function(modal) {
       $scope.modal = modal;
@@ -117,15 +119,46 @@ angular.module('todo.controllers', [])
       console.log("Ended: "+$scope.activeIndex);
     });
 
+    var status_list = [
+        'Pending',
+        'Started',
+        'Completed'
+      ];
     $scope.openView = function() {
-        // console.log($scope.modalInput);
-        // console.log($scope.modalInput);
+        // $scope.modalInput.status = "Pending";
         $scope.modal.show();
     };
 
+    $scope.editView = function(todoItem) {
+      $scope.modalInput.todo_id = todoItem.todo_id;
+      $scope.modalInput.title = todoItem.title;
+      $scope.modalInput.content = todoItem.content;
+      $scope.modalInput.date = todoItem.dt;
+      $scope.modalInput.status = Capitalize(todoItem.status);
+      $scope.modalInput.status_list = status_list;
+      $scope.modal.show();
+    };
+
+    // Click backbutton to save and close modal
     $scope.saveAndClose = function() {
-      
-      $scope.modal.hide();
+      if($scope.modalInput.todo_id) {
+        DbFactory.updateTodo($scope.modalInput).then(function(res) {
+            console.log(JSON.stringify(res));
+            $scope.modalInput = {};
+            $scope.loadTodo();
+            $scope.modal.hide();
+        });
+        
+      } else {
+        DbFactory.insertTodo($scope.modalInput).then(
+          function(res) {
+            console.log(JSON.stringify(res));
+            $scope.modalInput = {};
+            $scope.loadTodo();
+            $scope.modal.hide();
+          }
+        );
+      }
     };
 
     $scope.closeView = function() {
@@ -134,63 +167,78 @@ angular.module('todo.controllers', [])
       $scope.modal.hide();
     };
 
+    // Filter Popover
+    $ionicPopover.fromTemplateUrl('templates/popover.html', {
+      scope: $scope,
+    }).then(function(popover) {
+      $scope.popover = popover;
+    });
+    
+    //Cleanup the popover when we're done with it!
+
+    $scope.$on('$destroy', function() {
+      $scope.popover.remove();
+    });
+    // Execute action on hidden popover
+    $scope.$on('popover.hidden', function() {
+      // Execute action
+    });
+    // Execute action on remove popover
+    $scope.$on('popover.removed', function() {
+      // Execute action
+    });
+
+    $scope.openFilterView = function($event) {
+      $scope.popoverInput = {};
+      $scope.popoverInput.selected = 'Date';
+      $scope.popover.show($event);
+    };
+    
+
+    // Todo Item Action Sheet
+    $scope.optionsView = function(itemToDelete) {
+
+      $ionicActionSheet.show({
+        titleText: 'Todo Options',
+        buttons: [
+          { text: '<i class="icon ion-edit assertive"></i> Edit' },
+        ],
+        destructiveText: 'Delete',
+        cancelText: 'Cancel',
+        cancel: function() {
+          console.log('CANCELLED');
+        },
+        buttonClicked: function(index) {
+          console.log('BUTTON CLICKED', index);
+          return true;
+        },
+        destructiveButtonClicked: function() {
+          DbFactory.deleteTodo(itemToDelete.todo_id).then(
+          function(res) {
+            console.log("ID: "+itemToDelete.todo_id);
+              console.log(JSON.stringify(res));
+              //$scope.loadTodo();
+              var index = $scope.items.indexOf(itemToDelete);
+              $scope.items.splice(index, 1);
+          });
+          return true;
+        }
+      });
+    };
 })
 
 .controller('AboutCtrl', function($scope) {
 
 })
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
-
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
+.filter('capitalize', function() {
+  return function(word) {
+    return (!!word) ? word.charAt(0).toUpperCase() + word.substr(1).toLowerCase() : '';
+  }
 })
 
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-})
+function Capitalize(word) {
+  return (!!word) ? word.charAt(0).toUpperCase() + word.substr(1).toLowerCase() : '';
+}
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
-});
+;

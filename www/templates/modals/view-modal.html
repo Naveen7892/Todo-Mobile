@@ -20,18 +20,35 @@
     </button>
   </ion-header-bar>
   
-  <ion-content class="has-header" scroll="false">
+  <ion-content class="has-header" scroll="true">
     <div class="list">
+      <!--TITLE-->
       <label class="item item-input item-floating-label">
         <span class="input-label">Title</span>
         <input type="text" placeholder="Enter title" ng-model="modalInput.title">
       </label>
+      <!--CONTENT-->
       <label class="item item-input item-floating-label">
-        <!--<span class="input-label">Last Name</span>
-        <input type="text" placeholder="Last Name">-->
           <span class="input-label">Content</span>
-          <textarea placeholder="Enter content" ng-model="modalInput.content"></textarea>
+          <textarea placeholder="Enter content" ng-model="modalInput.content" class="custom_textarea"></textarea>
+      </label>
+      <!--STATUS-->
+      <label ng-if="modalInput.todo_id" class="item item-input item-select">
+        <div class="input-label">
+          Status
+        </div>
+        <!--<select ng-model="modalInput.status">
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+        </select>-->
+        <select ng-model="modalInput.status" ng-options="stat for stat in modalInput.status_list">
+        </select>
+      </label>
+      <!--DATE-->
+      <label ng-if="modalInput.todo_id" class="item item-input">
+        {{ modalInput.date }}
       </label>
     </div>
   </ion-content>
+
 </ion-modal-view>
